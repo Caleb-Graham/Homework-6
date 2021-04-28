@@ -5,3 +5,10 @@ C:\Users\Caleb\source\repos\Homework 6\LinqConsoleApp2\obj\Debug\LinqConsoleApp2
 C:\Users\Caleb\source\repos\Homework 6\LinqConsoleApp2\obj\Debug\LinqConsoleApp2.csproj.CoreCompileInputs.cache
 C:\Users\Caleb\source\repos\Homework 6\LinqConsoleApp2\obj\Debug\LinqConsoleApp2.exe
 C:\Users\Caleb\source\repos\Homework 6\LinqConsoleApp2\obj\Debug\LinqConsoleApp2.pdb
+C:\Users\Caleb\source\repos\Homework-6\Homework 6\LinqConsoleApp2\bin\Debug\LinqConsoleApp2.exe.config
+C:\Users\Caleb\source\repos\Homework-6\Homework 6\LinqConsoleApp2\bin\Debug\LinqConsoleApp2.exe
+C:\Users\Caleb\source\repos\Homework-6\Homework 6\LinqConsoleApp2\bin\Debug\LinqConsoleApp2.pdb
+C:\Users\Caleb\source\repos\Homework-6\Homework 6\LinqConsoleApp2\obj\Debug\LinqConsoleApp2.csprojAssemblyReference.cache
+C:\Users\Caleb\source\repos\Homework-6\Homework 6\LinqConsoleApp2\obj\Debug\LinqConsoleApp2.csproj.CoreCompileInputs.cache
+C:\Users\Caleb\source\repos\Homework-6\Homework 6\LinqConsoleApp2\obj\Debug\LinqConsoleApp2.exe
+C:\Users\Caleb\source\repos\Homework-6\Homework 6\LinqConsoleApp2\obj\Debug\LinqConsoleApp2.pdb

@@ -14,14 +14,14 @@ namespace LinqConsoleApp2
         {
             // Use a connection string.
             DataContext db = new DataContext
-                (@"c:\Program Files\Microsoft SQL Server\MSSQL15.MSSQLSERVER\MSSQL\DATA\northwnd.mdf");
+                (@"c:\linqtest5\northwnd.mdf");
             // I have tried:
             // changing various different file paths
             // changing the database on and offline
             // attaching to visual studio through server explorer and data connections
             // changing permissions on my SMSS folder. Led to this error
             // trying to attach the database to visual studios. (requires version 852, I'm running 904?)
-           
+
 
             // Get a typed table to run queries.
             Table<Customer> Customers = db.GetTable<Customer>();
@@ -72,7 +72,6 @@ namespace LinqConsoleApp2
                 this._CustomerID = value;
             }
         }
-
         private string _City;
         [Column(Storage = "_City")]
         public string City
@@ -85,6 +84,57 @@ namespace LinqConsoleApp2
             {
                 this._City = value;
             }
+        }
+
+        // Walkthrough Two:
+        // Here we are defining the relationship between the Customer and the Order class
+        // Adding this annotation does enable you to easily navigate objects in either direction
+        private EntitySet<Order> _Orders;
+        public Customer()
+        {
+            this._Orders = new EntitySet<Order>();
+        }
+
+        [Association(Storage = "_Orders", OtherKey = "CustomerID")]
+        public EntitySet<Order> Orders
+        {
+            get { return this._Orders; }
+            set { this._Orders.Assign(value); }
+        }
+    }
+
+
+    // Walkthrough Two:
+    [Table(Name = "Orders")]
+    public class Order
+    {
+        // Here we which indicates that Order.Customer relates as a foreign key to Customer.CustomerID
+        private int _OrderID = 0;
+        private string _CustomerID;
+        private EntityRef<Customer> _Customer;
+        public Order() { this._Customer = new EntityRef<Customer>(); }
+
+        [Column(Storage = "_OrderID", DbType = "Int NOT NULL IDENTITY",
+        IsPrimaryKey = true, IsDbGenerated = true)]
+        public int OrderID
+        {
+            get { return this._OrderID; }
+            // No need to specify a setter because IsDBGenerated is
+            // true.
+        }
+
+        [Column(Storage = "_CustomerID", DbType = "NChar(5)")]
+        public string CustomerID
+        {
+            get { return this._CustomerID; }
+            set { this._CustomerID = value; }
+        }
+
+        [Association(Storage = "_Customer", ThisKey = "CustomerID")]
+        public Customer Customer
+        {
+            get { return this._Customer.Entity; }
+            set { this._Customer.Entity = value; }
         }
     }
 }
