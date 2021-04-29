@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Data.Linq;
 using System.Data.Linq.Mapping;
 
@@ -12,46 +10,96 @@ namespace LinqConsoleApp2
     {
         static void Main(string[] args)
         {
-            // Use a connection string.
-            DataContext db = new DataContext
-                (@"c:\linqtest5\northwnd.mdf");
-            // I have tried:
-            // changing various different file paths
-            // changing the database on and offline
-            // attaching to visual studio through server explorer and data connections
-            // changing permissions on my SMSS folder. Led to this error
-            // trying to attach the database to visual studios. (requires version 852, I'm running 904?)
+            // Use the following connection string.
+            Northwnd db = new Northwnd(@"c:\linqtest6\northwnd.mdf");
+
+            // Create the new Customer object.
+            Customer newCust = new Customer();
+            newCust.CompanyName = "AdventureWorks Cafe";
+            newCust.CustomerID = "ADVCA";
 
 
-            // Get a typed table to run queries.
-            Table<Customer> Customers = db.GetTable<Customer>();
+            // Add the customer to the Customers table.
+            db.Customers.InsertOnSubmit(newCust);
 
-            // Here we are wrtiting a query find which customers in the database Customers table are located in London.
-            // However this does not actually perform the query it simply describes it. Known as deferred execution
+            Console.WriteLine("\nCustomers matching CA before insert");
 
-            // Attach the log to show generated SQL.
-            db.Log = Console.Out;
-
-            // Query for customers in London.
-            IQueryable<Customer> custQuery =
-                from cust in Customers
-                where cust.City == "London"
-                select cust;
-
-            // Here we actually execute the command
-            // When we hit the foreach statement a SQL command is executed against the database and objects are materialized.
-            foreach (Customer cust in custQuery)
+            foreach (var c in db.Customers.Where(cust => cust.CustomerID.Contains("CA")))
             {
-                Console.WriteLine("ID={0}, City={1}", cust.CustomerID,
-                    cust.City);
+                Console.WriteLine("{0}, {1}, {2}",
+                    c.CustomerID, c.CompanyName, c.Orders.Count);
             }
 
-            // Prevent console window from closing.
+            // Query for specific customer.
+            // you will retrieve a Customer object and modify one of its properties
+            // First() returns one object rather than a collection.
+            var existingCust =
+                (from c in db.Customers
+                 where c.CustomerID == "ALFKI"
+                 select c)
+                .First();
+
+            // Change the contact name of the customer.
+            existingCust.ContactName = "New Contact";
+
+
+            // Access the first element in the Orders collection.
+            Order ord0 = existingCust.Orders[0];
+
+            // Access the first element in the OrderDetails collection.
+            OrderDetail detail0 = ord0.OrderDetails[0];
+
+            // Display the order to be deleted.
+            Console.WriteLine
+                ("The Order Detail to be deleted is: OrderID = {0}, ProductID = {1}",
+                detail0.OrderID, detail0.ProductID);
+
+            // Mark the Order Detail row for deletion from the database.
+            db.OrderDetails.DeleteOnSubmit(detail0);
+
+
+            db.SubmitChanges();
+
+            // show the before and after effects of submitting the changes
+            Console.WriteLine("\nCustomers matching CA after update");
+            foreach (var c in db.Customers.Where(cust =>
+                cust.CustomerID.Contains("CA")))
+            {
+                Console.WriteLine("{0}, {1}, {2}",
+                    c.CustomerID, c.CompanyName, c.Orders.Count);
+            }
+
+            // Keep the console window open after activity stops.
             Console.ReadLine();
         }
     }
 
-    // Talk about this first
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    // By strongly typing the DataContext object, you do not need calls to GetTable
+    // You can use strongly typed tables in all your queries when you use the strongly typed DataContext object.
+
+    // Walkthrough Two:
+    public class Northwind : DataContext
+    {
+        // Table<T> abstracts database details per table/data type.
+        public Table<Customer> Customers;
+        public Table<Order> Orders;
+
+        public Northwind(string connection) : base(connection) { }
+    }
 
     // Create a class and map it to a database table
     [Table(Name = "Customers")]
@@ -102,6 +150,9 @@ namespace LinqConsoleApp2
             set { this._Orders.Assign(value); }
         }
     }
+
+
+
 
 
     // Walkthrough Two:
